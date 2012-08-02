@@ -1,16 +1,13 @@
 package com.googlecode.ordbok3;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-
-import com.googlecode.ordbok3.feedParser.FeedParser;
-import com.googlecode.ordbok3.log.OrdbokLog;
-import com.googlecode.ordbok3.Word;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,6 +25,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.googlecode.ordbok3.feedParser.FeedParser;
+import com.googlecode.ordbok3.log.OrdbokLog;
 
 public class MainWindow extends Activity implements OnClickListener {
 
@@ -105,7 +105,7 @@ public class MainWindow extends Activity implements OnClickListener {
 				imm.hideSoftInputFromWindow(textViewText.getWindowToken(), 0);
 				break;
 			case R.id.ButtonClear:
-				// test code 
+				// test code 			
 				editTextOrd.clearComposingText();
 				editTextOrd.getText().clear();
 				break;
@@ -128,7 +128,7 @@ public class MainWindow extends Activity implements OnClickListener {
 			URL url;
 			URLConnection urlConn;
 			DataOutputStream dos;
-			DataInputStream dis;
+			BufferedReader dis;
 
 			String ord = editTextOrd.getText().toString();
 			
@@ -154,7 +154,7 @@ public class MainWindow extends Activity implements OnClickListener {
 			dos.flush();
 			dos.close();
 
-			dis = new DataInputStream(urlConn.getInputStream());
+			dis = new BufferedReader(new InputStreamReader(urlConn.getInputStream(), "UTF-8"));
 			String s = "";
 			String content = "";
 

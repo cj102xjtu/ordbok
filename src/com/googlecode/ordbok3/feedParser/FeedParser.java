@@ -9,11 +9,13 @@ import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
+import android.test.IsolatedContext;
 import android.util.Xml;
-import android.sax.*;
 
 import com.googlecode.ordbok3.translationData.Example;
+import com.googlecode.ordbok3.translationData.SwedishWord;
 import com.googlecode.ordbok3.translationData.Word;
+import com.googlecode.ordbok3.translationData.WordBuilder;
 
 //import com.googlecode.ordbok3.Word;
 
@@ -161,7 +163,7 @@ public class FeedParser
 
 	public List<Word> parse(String sAXml)
 	{
-		final Word currentWord = new Word();
+		final WordBuilder wordBuilder = WordBuilder.instance();
 		RootElement root = new RootElement(ksNode);
 		final List<Word> Words = new ArrayList<Word>();
 		Element item = root.getChild(ksWord);
@@ -173,14 +175,16 @@ public class FeedParser
 			@Override
 			public void start(Attributes attributes)
 			{
+				wordBuilder.setLang(attributes.getValue(ksLang));
+				
 				// set word value
-				currentWord.setWordValue(attributes.getValue(ksValue));
+				wordBuilder.setWordValue(attributes.getValue(ksValue));
 
 				// set word language
-				currentWord.setLang(attributes.getValue(ksLang));
+				wordBuilder.setLang(attributes.getValue(ksLang));
 
 				// set word class
-				currentWord.setWordClass(attributes.getValue(ksClass));
+				wordBuilder.setWordClass(attributes.getValue(ksClass));
 			}
 		});
 
@@ -189,8 +193,8 @@ public class FeedParser
 		{
 			public void end()
 			{
-				Words.add(currentWord.copy());
-				currentWord.clear();
+				Words.add(wordBuilder.generateWord());
+				
 			}
 		});
 
@@ -202,7 +206,7 @@ public class FeedParser
 			        @Override
 			        public void start(Attributes attributes)
 			        {
-				        currentWord.addTranslation(attributes.getValue(ksValue));
+				        wordBuilder.addTranslation(attributes.getValue(ksValue));
 			        }
 		        });
 
@@ -215,11 +219,11 @@ public class FeedParser
 			        public void start(Attributes attributes)
 			        {
 				        // set phonetic value
-				        currentWord.setPhoneticValue(attributes
+				        wordBuilder.setPhoneticValue(attributes
 				                .getValue(ksValue));
 
 				        // set phonetic file
-				        currentWord.setPhoneticSoundFile(attributes
+				        wordBuilder.setPhoneticSoundFile(attributes
 				                .getValue(ksSoundFile));
 
 			        }
@@ -233,7 +237,7 @@ public class FeedParser
 			        @Override
 			        public void start(Attributes attributes)
 			        {
-				        currentWord.addParadigms(attributes
+				        wordBuilder.addParadigms(attributes
 				                .getValue(ksValue));
 
 			        }
@@ -247,7 +251,7 @@ public class FeedParser
 			        @Override
 			        public void start(Attributes attributes)
 			        {
-				        currentWord.setSynonym(attributes.getValue(ksValue));
+				        wordBuilder.setSynonym(attributes.getValue(ksValue));
 			        }
 		        });
 
@@ -259,7 +263,7 @@ public class FeedParser
 			public void start(Attributes AAttributes)
 			{
 				Example example = new Example(AAttributes.getValue(ksValue));
-				currentWord.addExample(example);
+				wordBuilder.addExample(example);
 			}
 		});
 		
@@ -271,7 +275,7 @@ public class FeedParser
 			public void start(Attributes AAttributes)
 			{
 				// get the last example in the list
-				Example example = currentWord.getExampleList().get(currentWord.getExampleList().size() - 1);
+				Example example = wordBuilder.getExampleList().get(wordBuilder.getExampleList().size() - 1);
 				
 				// update the last example translation value
 				example.setTranslationExample(AAttributes.getValue(ksValue));
@@ -290,6 +294,17 @@ public class FeedParser
 		{
 			throw new RuntimeException(e);
 		}
+		
+		// test code for translation remove it later.
+		for (Word word : Words)
+        {
+	        if(word instanceof SwedishWord)
+	        {
+	        	word.translateToChinese();
+	        }
+        }
+		
+		
 		return Words;
 	}
 	

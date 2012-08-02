@@ -1,8 +1,9 @@
 package com.googlecode.ordbok3;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -105,7 +106,7 @@ public class MainWindow extends Activity implements OnClickListener {
 				imm.hideSoftInputFromWindow(textViewText.getWindowToken(), 0);
 				break;
 			case R.id.ButtonClear:
-				// test code 
+				// test code 			
 				editTextOrd.clearComposingText();
 				editTextOrd.getText().clear();
 				break;
@@ -128,7 +129,7 @@ public class MainWindow extends Activity implements OnClickListener {
 			URL url;
 			URLConnection urlConn;
 			DataOutputStream dos;
-			DataInputStream dis;
+			BufferedReader dis;
 
 			String ord = editTextOrd.getText().toString();
 			
@@ -154,7 +155,7 @@ public class MainWindow extends Activity implements OnClickListener {
 			dos.flush();
 			dos.close();
 
-			dis = new DataInputStream(urlConn.getInputStream());
+			dis = new BufferedReader(new InputStreamReader(urlConn.getInputStream(), "UTF-8"));
 			String s = "";
 			String content = "";
 

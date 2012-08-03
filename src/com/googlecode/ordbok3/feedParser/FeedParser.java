@@ -9,7 +9,6 @@ import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
-import android.test.IsolatedContext;
 import android.util.Xml;
 
 import com.googlecode.ordbok3.translationData.Example;

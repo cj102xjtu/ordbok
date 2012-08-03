@@ -14,8 +14,13 @@ public class SwedishWord extends Word
 	public void translateToChinese()
 	{
 		ChineseTranslator translator = ChineseTranslator.instance();
-		String sTranslateResult = translator.translateToChinese("watch, see. the committee will look into the tax regulations. watch TV");
-		                
+		translator.initialTranslation();
+		translator.addEngWordToTranslate("watch:see");
+		translator.addEngWordToTranslate("test");
+		translator.addEngWordToTranslate("Strange");
+		translator.addEngWordToTranslate("the committee will look into the tax regulations.");
+		translator.addEngWordToTranslate("watch TV.");
+		translator.submitEngWordToTranslationServer();
 	}
 
 	@Override

@@ -175,28 +175,30 @@ public class MainWindow extends Activity implements OnClickListener {
 			
 			OrdbokLog.i(LOG_TAG, "xml content" + content);
 			
+			content = content.replace("&cd lt", "[");
+			content = content.replace("&gt", "]");
+			content = content.replace("&quot", "\"");
+			content = content.replace("Ã¤", "ä");//&amparing;
+			content = content.replace("Ã¥", "å");//�?		
+			content = content.replace("Ã¶", "ö");
+			content = content.replace("&amp;#39;", "'");
 			FeedParser parser = new FeedParser();
 			parser.parse(content);
-
+			content = content.replace("&amp", "&");
 			
 			content = content.replace("&amp;quot;", "");
 			content = content.replace("origin=lexin", "");
 			content = content.replaceAll("date=(\\S{12})", "");
 			
-			content = content.replace("&amp", "&");
-			content = content.replace("&lt", "[");
-			content = content.replace("&gt", "]");
-			content = content.replace("&quot", "\"");
-			content = content.replace("Ã¤", "ä");//&aring;
-			content = content.replace("Ã¥", "å");//�?		
-			content = content.replace("Ã¶", "ö");
 			//content = content.replaceAll("�?, "�?");//�?		
 			content = content.replace("\\\"", "");
-			content = content.replace("&;#39;", "'");
 			content = content.replace(">", ">\n");
 			content = content.replace("+", "_");
 			content = content.replace("comment=", " -- ");
 			content = content.replace("origin=lexin", "");
+			
+
+
 			
 			
 			//Log.e(LOG_TAG,content);

@@ -11,6 +11,7 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
+import com.googlecode.ordbok3.translationData.ChineseTranslator;
 import com.googlecode.ordbok3.translationData.Example;
 import com.googlecode.ordbok3.translationData.SwedishWord;
 import com.googlecode.ordbok3.translationData.Word;
@@ -88,7 +89,7 @@ public class FeedParser
 	        + "</see>"
 	        + "<see value=\"tittar.swf\" type=\"animation\" origin=\"lexin\" date=\"2011-03-03\">"
 	        + "</see>"
-	        + "<example id=\"10667\" value=\"titta pÃ¥ TV\" date=\"2011-03-03\">"
+	        + "<example id=\"10667\" value=\"titta p� TV\" date=\"2011-03-03\">"
 	        + "<translation value=\"watch TV\">"
 	        + "</translation>"
 	        + "</example>"
@@ -159,6 +160,8 @@ public class FeedParser
 	        + "<grammar value=\"A &amp; (pÃ¥ B/x)\" origin=\"lexin\" date=\"2011-03-03\">"
 	        + "</grammar>" + "</word>" + "</node>";
 	static final String ksNode = "node";
+	
+	private ChineseTranslator o_ChineseTranslator = ChineseTranslator.instance();
 
 	public List<Word> parse(String sAXml)
 	{
@@ -284,28 +287,40 @@ public class FeedParser
 
 		try
 		{
-			
 			Xml.parse(correctXmlFormat(sAXml), root.getContentHandler());
-			// Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8,
-			// root.getContentHandler());
 		}
 		catch (Exception e)
 		{
 			throw new RuntimeException(e);
 		}
 		
-		// test code for translation remove it later.
-		for (Word word : Words)
-        {
-	        if(word instanceof SwedishWord)
-	        {
-	        	word.translateToChinese();
-	        }
-        }
+		// translate to Chinese
+		doChineseTranslation(Words);
 		
 		
 		return Words;
 	}
+
+	private void doChineseTranslation(final List<Word> Words)
+    {
+	    // clear the information in last translation.
+		o_ChineseTranslator.initialTranslation();
+
+		// Add translation content to Chinese translator
+		for (Word word : Words)
+        {
+			word.submitTranslat�onDate(o_ChineseTranslator);
+        }
+		
+		// Do translation from sererv
+		o_ChineseTranslator.submitEngWordToTranslationServer();
+		
+		// get translation result from Chinese translator
+		for (Word word : Words)
+        {
+	        word.getTranslateResultFromTranslator(o_ChineseTranslator);
+        }
+    }
 	
 	private String correctXmlFormat(String sARawXml)
     {

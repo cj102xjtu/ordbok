@@ -199,7 +199,8 @@ public abstract class Word
 		o_TranslationList.clear();
 	}
 
-	abstract public void translateToChinese();
+	abstract public void submitTranslatíonDate(TranslatorInterface ATranslator);
+	abstract public void getTranslateResultFromTranslator(TranslatorInterface ATranslator);
 	abstract public Word createWord();
 
 }

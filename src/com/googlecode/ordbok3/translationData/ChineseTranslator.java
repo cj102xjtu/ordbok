@@ -78,7 +78,7 @@ public class ChineseTranslator implements TranslatorInterface
 	    return o_TranslationTable.initialTranslation();
     }
 
-	public boolean translateToChinese(String sAEnglishWord)
+	private boolean translateToChinese(String sAEnglishWord)
 	{
 		boolean bResult = false;
 		try

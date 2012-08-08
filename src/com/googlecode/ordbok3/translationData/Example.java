@@ -4,7 +4,18 @@ public class Example
 {
 	private String o_sOriginalExample;
 	private String o_sTranslationExample;
+	private String o_sChineseTranslationExample;
 	
+	public String getChineseTranslationExample()
+    {
+    	return o_sChineseTranslationExample;
+    }
+
+	public void setChineseTranslationExample(String sAChineseTranslationExample)
+    {
+    	this.o_sChineseTranslationExample = sAChineseTranslationExample;
+    }
+
 	public Example(String sAOrignalExample)
 	{
 		o_sOriginalExample = sAOrignalExample;

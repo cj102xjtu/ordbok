@@ -12,7 +12,9 @@ public class WordBuilder
 	private String o_sPhoneticValue = "";
 	private String o_sWordClass = "";
 	private String o_sWordValue = "";
-	private List<Example> o_ExampleList = new ArrayList<Example>();
+	private List<SentenceComposite> o_ExampleList = new ArrayList<SentenceComposite>();
+	List<SentenceComposite> o_CompoundList = new ArrayList<SentenceComposite>();
+	List<SentenceComposite> o_IdiomList = new ArrayList<SentenceComposite>();
 	private List<String> o_ParadigmList = new ArrayList<String>();
 	private List<String> o_SynonymList = new ArrayList<String>();
 	private List<String> o_TranslationList = new ArrayList<String>();
@@ -64,8 +66,14 @@ public class WordBuilder
 			word.o_TranslationList = new ArrayList<String>(o_TranslationList);
 			Collections.copy(word.o_TranslationList, o_TranslationList);
 
-			word.o_ExampleList = new ArrayList<Example>(o_ExampleList);
+			word.o_ExampleList = new ArrayList<SentenceComposite>(o_ExampleList);
 			Collections.copy(word.o_ExampleList, o_ExampleList);
+			
+			word.o_CompoundList = new ArrayList<SentenceComposite>(o_CompoundList);
+			Collections.copy(word.o_CompoundList, o_CompoundList);
+			
+			word.o_IdiomList = new ArrayList<SentenceComposite>(o_IdiomList);
+			Collections.copy(word.o_IdiomList, o_IdiomList);
 
 			word.o_ParadigmList = new ArrayList<String>(o_ParadigmList);
 			Collections.copy(word.o_ParadigmList, o_ParadigmList);
@@ -84,7 +92,7 @@ public class WordBuilder
 		o_TranslationList.add(translation);
 	}
 
-	public List<Example> getExampleList()
+	public List<SentenceComposite> getExampleList()
 	{
 		return o_ExampleList;
 	}
@@ -129,7 +137,7 @@ public class WordBuilder
 		return o_sWordValue;
 	}
 
-	public void addExample(Example AExample)
+	public void addExample(SentenceComposite AExample)
 	{
 		this.o_ExampleList.add(AExample);
 	}
@@ -205,6 +213,39 @@ public class WordBuilder
 	{
 		this.o_sWordValue = wordValue;
 	}
+	
+	/**
+     * @return the o_CompoundList
+     */
+    public List<SentenceComposite> getCompoundList()
+    {
+    	return o_CompoundList;
+    }
+
+	/**
+     * @param o_CompoundList the o_CompoundList to set
+     */
+    public void addCompound(SentenceComposite ACompound)
+    {
+    	this.o_CompoundList.add(ACompound);
+    }
+
+	/**
+     * @return the o_IdiomList
+     */
+    public List<SentenceComposite> getIdiomList()
+    {
+    	return o_IdiomList;
+    }
+
+	/**
+     * @param o_IdiomList the o_IdiomList to set
+     */
+    public void addIdiom(SentenceComposite AIdiom)
+    {
+    	this.o_IdiomList.add(AIdiom);
+    }
+
 
 	private void clear()
 	{
@@ -214,6 +255,8 @@ public class WordBuilder
 		o_sWordClass = "";
 		o_sWordValue = "";
 		o_ExampleList.clear();
+		o_CompoundList.clear();
+		o_IdiomList.clear();
 		o_ParadigmList.clear();
 		o_SynonymList.clear();
 		o_TranslationList.clear();

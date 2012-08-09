@@ -12,8 +12,7 @@ import android.sax.StartElementListener;
 import android.util.Xml;
 
 import com.googlecode.ordbok3.translationData.ChineseTranslator;
-import com.googlecode.ordbok3.translationData.Example;
-import com.googlecode.ordbok3.translationData.SwedishWord;
+import com.googlecode.ordbok3.translationData.SentenceComposite;
 import com.googlecode.ordbok3.translationData.Word;
 import com.googlecode.ordbok3.translationData.WordBuilder;
 
@@ -40,125 +39,127 @@ public class FeedParser
 	static final String ksInflection = "inflection";
 	static final String ksSynonym = "synonym";
 	static final String ksExample = "example";
+	static final String ksCompound = "compound";
+	static final String ksIdiom = "idiom";
 	static final String ksDefinition = "definition";
 
-	// test string, remove this after parser implement.
-	static final String ksTestXml = "<node>"
-	        + "<word value=\"titta\" lang=\"sv\" class=\"vb\" id=\"189390\" lexinid=\"18940\" origin=\"lexin\" comment=\"Ã¤ven &amp;quot;undersÃ¶ka nÃ¤rmare&amp;quot;\" date=\"2011-03-03\">"
-	        + "<translation id=\"189390-18310\" value=\"watch\" origin=\"user\" date=\"2012-04-09T01:50:22\">"
-	        + "</translation>"
-	        + "<translation id=\"189390-18311\" value=\"see\" origin=\"user\" date=\"2012-04-09T01:50:22\">"
-	        + "</translation>"
-	        + "<phonetic value=\"Â²tIt:ar\" soundFile=\"tittar.swf\" date=\"2011-03-03\">"
-	        + "</phonetic>"
-	        + "<paradigm id=\"16544\" origin=\"lexin\" date=\"2011-03-03\">"
-	        + "<inflection value=\"tittade\">"
-	        + "</inflection>"
-	        + "<inflection value=\"tittat\">"
-	        + "</inflection>"
-	        + "<inflection value=\"titta\">"
-	        + "</inflection>"
-	        + "<inflection value=\"tittar\">"
-	        + "</inflection>"
-	        + "</paradigm>"
-	        + "<synonym value=\"beskÃ¥da\" level=\"4.2\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"betrakta\" level=\"4.0\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"betraktar\" level=\"5.0\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"blicka\" level=\"3.0\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"glo\" level=\"4.2\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"glutta\" level=\"3.4\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"kika\" level=\"4.1\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"plira\" level=\"4.0\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"se\" level=\"3.4\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"skÃ¥da\" level=\"4.6\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"spana\" level=\"4.6\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"Ã¶gna\" level=\"3.3\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<see value=\"titta||titta..1||titta..vb.1\" type=\"saldo\" origin=\"saldo\" date=\"2011-03-03\">"
-	        + "</see>"
-	        + "<see value=\"tittar.swf\" type=\"animation\" origin=\"lexin\" date=\"2011-03-03\">"
-	        + "</see>"
-	        + "<example id=\"10667\" value=\"titta p� TV\" date=\"2011-03-03\">"
-	        + "<translation value=\"watch TV\">"
-	        + "</translation>"
-	        + "</example>"
-	        + "<example id=\"10668\" value=\"kommittÃ©n ska titta pÃ¥ reglerna fÃ¶r beskattning\" date=\"2011-03-03\">"
-	        + "<translation value=\"the committee will look into the tax regulations\">"
-	        + "</translation>"
-	        + "</example>"
-	        + "<definition id=\"18309\" value=\"se (i en viss avsikt)\" date=\"2011-03-03\">"
-	        + "</definition>"
-	        + "<grammar value=\"A &amp; (pÃ¥ B/x)\" origin=\"lexin\" date=\"2011-03-03\">"
-	        + "</grammar>"
-	        + "</word>"
-	        + "<word value=\"titta test\" lang=\"sv\" class=\"vb\" id=\"189390\" lexinid=\"18940\" origin=\"lexin\" comment=\"Ã¤ven &amp;quot;undersÃ¶ka nÃ¤rmare&amp;quot;\" date=\"2011-03-03\">"
-	        + "<translation id=\"189390-18310\" value=\"watch test\" origin=\"user\" date=\"2012-04-09T01:50:22\">"
-	        + "</translation>"
-	        + "<translation id=\"189390-18311\" value=\"see test\" origin=\"user\" date=\"2012-04-09T01:50:22\">"
-	        + "</translation>"
-	        + "<phonetic value=\"Â²tIt:ar\" soundFile=\"tittar.swf\" date=\"2011-03-03\">"
-	        + "</phonetic>"
-	        + "<paradigm id=\"16544\" origin=\"lexin\" date=\"2011-03-03\">"
-	        + "<inflection value=\"tittade\">"
-	        + "</inflection>"
-	        + "<inflection value=\"tittat\">"
-	        + "</inflection>"
-	        + "<inflection value=\"titta\">"
-	        + "</inflection>"
-	        + "<inflection value=\"tittar\">"
-	        + "</inflection>"
-	        + "</paradigm>"
-	        + "<synonym value=\"beskÃ¥da\" level=\"4.2\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"betrakta\" level=\"4.0\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"betraktar\" level=\"5.0\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"blicka\" level=\"3.0\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"glo\" level=\"4.2\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"glutta\" level=\"3.4\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"kika\" level=\"4.1\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"plira\" level=\"4.0\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"se\" level=\"3.4\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"skÃ¥da\" level=\"4.6\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"spana\" level=\"4.6\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<synonym value=\"Ã¶gna\" level=\"3.3\" origin=\"synlex\" date=\"2011-03-03\">"
-	        + "</synonym>"
-	        + "<see value=\"titta||titta..1||titta..vb.1\" type=\"saldo\" origin=\"saldo\" date=\"2011-03-03\">"
-	        + "</see>"
-	        + "<see value=\"tittar.swf\" type=\"animation\" origin=\"lexin\" date=\"2011-03-03\">"
-	        + "</see>"
-	        + "<example id=\"10667\" value=\"titta pÃ¥ TV\" date=\"2011-03-03\">"
-	        + "<translation value=\"watch TV\">"
-	        + "</translation>"
-	        + "</example>"
-	        + "<example id=\"10668\" value=\"kommittÃ©n ska titta pÃ¥ reglerna fÃ¶r beskattning\" date=\"2011-03-03\">"
-	        + "<translation value=\"the committee will look into the tax regulations\">"
-	        + "</translation>"
-	        + "</example>"
-	        + "<definition id=\"18309\" value=\"se (i en viss avsikt)\" date=\"2011-03-03\">"
-	        + "</definition>"
-	        + "<grammar value=\"A &amp; (pÃ¥ B/x)\" origin=\"lexin\" date=\"2011-03-03\">"
-	        + "</grammar>" + "</word>" + "</node>";
+//	// test string, remove this after parser implement.
+//	static final String ksTestXml = "<node>"
+//	        + "<word value=\"titta\" lang=\"sv\" class=\"vb\" id=\"189390\" lexinid=\"18940\" origin=\"lexin\" comment=\"Ã¤ven &amp;quot;undersÃ¶ka nÃ¤rmare&amp;quot;\" date=\"2011-03-03\">"
+//	        + "<translation id=\"189390-18310\" value=\"watch\" origin=\"user\" date=\"2012-04-09T01:50:22\">"
+//	        + "</translation>"
+//	        + "<translation id=\"189390-18311\" value=\"see\" origin=\"user\" date=\"2012-04-09T01:50:22\">"
+//	        + "</translation>"
+//	        + "<phonetic value=\"Â²tIt:ar\" soundFile=\"tittar.swf\" date=\"2011-03-03\">"
+//	        + "</phonetic>"
+//	        + "<paradigm id=\"16544\" origin=\"lexin\" date=\"2011-03-03\">"
+//	        + "<inflection value=\"tittade\">"
+//	        + "</inflection>"
+//	        + "<inflection value=\"tittat\">"
+//	        + "</inflection>"
+//	        + "<inflection value=\"titta\">"
+//	        + "</inflection>"
+//	        + "<inflection value=\"tittar\">"
+//	        + "</inflection>"
+//	        + "</paradigm>"
+//	        + "<synonym value=\"beskÃ¥da\" level=\"4.2\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"betrakta\" level=\"4.0\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"betraktar\" level=\"5.0\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"blicka\" level=\"3.0\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"glo\" level=\"4.2\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"glutta\" level=\"3.4\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"kika\" level=\"4.1\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"plira\" level=\"4.0\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"se\" level=\"3.4\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"skÃ¥da\" level=\"4.6\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"spana\" level=\"4.6\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"Ã¶gna\" level=\"3.3\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<see value=\"titta||titta..1||titta..vb.1\" type=\"saldo\" origin=\"saldo\" date=\"2011-03-03\">"
+//	        + "</see>"
+//	        + "<see value=\"tittar.swf\" type=\"animation\" origin=\"lexin\" date=\"2011-03-03\">"
+//	        + "</see>"
+//	        + "<example id=\"10667\" value=\"titta p� TV\" date=\"2011-03-03\">"
+//	        + "<translation value=\"watch TV\">"
+//	        + "</translation>"
+//	        + "</example>"
+//	        + "<example id=\"10668\" value=\"kommittÃ©n ska titta pÃ¥ reglerna fÃ¶r beskattning\" date=\"2011-03-03\">"
+//	        + "<translation value=\"the committee will look into the tax regulations\">"
+//	        + "</translation>"
+//	        + "</example>"
+//	        + "<definition id=\"18309\" value=\"se (i en viss avsikt)\" date=\"2011-03-03\">"
+//	        + "</definition>"
+//	        + "<grammar value=\"A &amp; (pÃ¥ B/x)\" origin=\"lexin\" date=\"2011-03-03\">"
+//	        + "</grammar>"
+//	        + "</word>"
+//	        + "<word value=\"titta test\" lang=\"sv\" class=\"vb\" id=\"189390\" lexinid=\"18940\" origin=\"lexin\" comment=\"Ã¤ven &amp;quot;undersÃ¶ka nÃ¤rmare&amp;quot;\" date=\"2011-03-03\">"
+//	        + "<translation id=\"189390-18310\" value=\"watch test\" origin=\"user\" date=\"2012-04-09T01:50:22\">"
+//	        + "</translation>"
+//	        + "<translation id=\"189390-18311\" value=\"see test\" origin=\"user\" date=\"2012-04-09T01:50:22\">"
+//	        + "</translation>"
+//	        + "<phonetic value=\"Â²tIt:ar\" soundFile=\"tittar.swf\" date=\"2011-03-03\">"
+//	        + "</phonetic>"
+//	        + "<paradigm id=\"16544\" origin=\"lexin\" date=\"2011-03-03\">"
+//	        + "<inflection value=\"tittade\">"
+//	        + "</inflection>"
+//	        + "<inflection value=\"tittat\">"
+//	        + "</inflection>"
+//	        + "<inflection value=\"titta\">"
+//	        + "</inflection>"
+//	        + "<inflection value=\"tittar\">"
+//	        + "</inflection>"
+//	        + "</paradigm>"
+//	        + "<synonym value=\"beskÃ¥da\" level=\"4.2\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"betrakta\" level=\"4.0\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"betraktar\" level=\"5.0\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"blicka\" level=\"3.0\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"glo\" level=\"4.2\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"glutta\" level=\"3.4\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"kika\" level=\"4.1\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"plira\" level=\"4.0\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"se\" level=\"3.4\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"skÃ¥da\" level=\"4.6\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"spana\" level=\"4.6\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<synonym value=\"Ã¶gna\" level=\"3.3\" origin=\"synlex\" date=\"2011-03-03\">"
+//	        + "</synonym>"
+//	        + "<see value=\"titta||titta..1||titta..vb.1\" type=\"saldo\" origin=\"saldo\" date=\"2011-03-03\">"
+//	        + "</see>"
+//	        + "<see value=\"tittar.swf\" type=\"animation\" origin=\"lexin\" date=\"2011-03-03\">"
+//	        + "</see>"
+//	        + "<example id=\"10667\" value=\"titta pÃ¥ TV\" date=\"2011-03-03\">"
+//	        + "<translation value=\"watch TV\">"
+//	        + "</translation>"
+//	        + "</example>"
+//	        + "<example id=\"10668\" value=\"kommittÃ©n ska titta pÃ¥ reglerna fÃ¶r beskattning\" date=\"2011-03-03\">"
+//	        + "<translation value=\"the committee will look into the tax regulations\">"
+//	        + "</translation>"
+//	        + "</example>"
+//	        + "<definition id=\"18309\" value=\"se (i en viss avsikt)\" date=\"2011-03-03\">"
+//	        + "</definition>"
+//	        + "<grammar value=\"A &amp; (pÃ¥ B/x)\" origin=\"lexin\" date=\"2011-03-03\">"
+//	        + "</grammar>" + "</word>" + "</node>";
 	static final String ksNode = "node";
 	
 	private ChineseTranslator o_ChineseTranslator = ChineseTranslator.instance();
@@ -264,10 +265,11 @@ public class FeedParser
 			@Override
 			public void start(Attributes AAttributes)
 			{
-				Example example = new Example(AAttributes.getValue(ksValue));
+				SentenceComposite example = new SentenceComposite(AAttributes.getValue(ksValue));
 				wordBuilder.addExample(example);
 			}
 		});
+		
 		
 		// set example translation
 		item.getChild(ksExample).getChild(ksTranslation).setStartElementListener(new StartElementListener()
@@ -277,13 +279,73 @@ public class FeedParser
 			public void start(Attributes AAttributes)
 			{
 				// get the last example in the list
-				Example example = wordBuilder.getExampleList().get(wordBuilder.getExampleList().size() - 1);
+				SentenceComposite example = wordBuilder.getExampleList().get(wordBuilder.getExampleList().size() - 1);
 				
 				// update the last example translation value
-				example.setTranslationExample(AAttributes.getValue(ksValue));
+				example.setTranslationSentence(AAttributes.getValue(ksValue));
 				
 			}
 		});
+		
+		// set compound original
+		item.getChild(ksCompound).setStartElementListener(new StartElementListener()
+		{
+			
+			@Override
+			public void start(Attributes AAttributes)
+			{
+				SentenceComposite compound = new SentenceComposite(AAttributes.getValue(ksValue));
+				wordBuilder.addCompound(compound);
+			}
+		});
+		
+		// set compound translation
+		item.getChild(ksCompound).getChild(ksTranslation).setStartElementListener(new StartElementListener()
+		{
+			
+			@Override
+			public void start(Attributes AAttributes)
+			{
+				// get the last compound in the list
+				SentenceComposite compound = wordBuilder.getCompoundList().get(wordBuilder.getCompoundList().size() - 1);
+				
+				// update the last compound translation value
+				compound.setTranslationSentence(AAttributes.getValue(ksValue));
+				
+			}
+		});
+		
+		// set idiom original
+		item.getChild(ksIdiom).setStartElementListener(new StartElementListener()
+        {
+
+	        @Override
+	        public void start(Attributes AAttributes)
+	        {
+		        SentenceComposite idiom = new SentenceComposite(
+		                AAttributes.getValue(ksValue));
+		        wordBuilder.addIdiom(idiom);
+	        }
+        });
+
+		// set idiom translation
+		item.getChild(ksIdiom).getChild(ksTranslation).setStartElementListener(new StartElementListener()
+        {
+
+	        @Override
+	        public void start(Attributes AAttributes)
+	        {
+		        // get the last idiom in the list
+		        SentenceComposite idiom = wordBuilder
+		                .getIdiomList()
+		                .get(wordBuilder.getIdiomList().size() - 1);
+
+		        // update the last idiom translation value
+		        idiom.setTranslationSentence(AAttributes
+		                .getValue(ksValue));
+
+	        }
+        });
 
 		try
 		{

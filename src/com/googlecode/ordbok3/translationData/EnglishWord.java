@@ -21,6 +21,11 @@ public class EnglishWord extends Word
 
 	private String o_sChineseWordValue = "";
 	
+	public String getChineseWordValue()
+    {
+    	return o_sChineseWordValue;
+    }
+
 	@Override
     public void submitTranslatíonDate(TranslatorInterface ATranslator)
     {
@@ -28,9 +33,9 @@ public class EnglishWord extends Word
 		ATranslator.addEngWordToTranslate(o_sWordValue);
 		
 		// add English example to translator
-		for (Example example : o_ExampleList)
+		for (SentenceComposite example : o_ExampleList)
         {
-	        ATranslator.addEngWordToTranslate(example.getOriginalExample());
+	        ATranslator.addEngWordToTranslate(example.getOriginalSentence());
         }
 	    
     }
@@ -50,16 +55,16 @@ public class EnglishWord extends Word
 		}
 		
 		// get Chinese example from translator
-		for (Example example : o_ExampleList)
+		for (SentenceComposite example : o_ExampleList)
         {
-			String sChineseSentence = ATranslator.getChTranslationForEng(example.getOriginalExample());
+			String sChineseSentence = ATranslator.getChTranslationForEng(example.getOriginalSentence());
 	        if(sChineseSentence != null)
 	        {
-	        	example.setChineseTranslationExample(sChineseSentence);
+	        	example.setChineseTranslationSentence(sChineseSentence);
 	        }
 	        else
 	        {
-	        	OrdbokLog.e(LOG_TAG, "Can not find the translation for " + example.getTranslationExample());
+	        	OrdbokLog.e(LOG_TAG, "Can not find the translation for " + example.getTranslationSentence());
 	        }
         }
 	    

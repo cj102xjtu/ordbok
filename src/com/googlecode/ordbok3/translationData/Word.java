@@ -11,7 +11,9 @@ public abstract class Word
 	String o_sPhoneticValue = "";
 	String o_sWordClass = "";
 	String o_sWordValue = "";
-	List<Example> o_ExampleList = new ArrayList<Example>();
+	List<SentenceComposite> o_ExampleList = new ArrayList<SentenceComposite>();
+	List<SentenceComposite> o_CompoundList = new ArrayList<SentenceComposite>();
+	List<SentenceComposite> o_IdiomList = new ArrayList<SentenceComposite>();
 	List<String> o_ParadigmList = new ArrayList<String>();
 	List<String> o_SynonymList = new ArrayList<String>();
 	List<String> o_TranslationList = new ArrayList<String>();
@@ -44,7 +46,7 @@ public abstract class Word
 		o_TranslationList = new ArrayList<String>(AWord.o_TranslationList);
 		Collections.copy(o_TranslationList, AWord.o_TranslationList);
 
-		o_ExampleList = new ArrayList<Example>(AWord.o_ExampleList);
+		o_ExampleList = new ArrayList<SentenceComposite>(AWord.o_ExampleList);
 		Collections.copy(o_ExampleList, AWord.o_ExampleList);
 
 		o_ParadigmList = new ArrayList<String>(AWord.o_ParadigmList);
@@ -64,7 +66,7 @@ public abstract class Word
 		o_TranslationList.add(translation);
 	}
 
-	public List<Example> getExampleList()
+	public List<SentenceComposite> getExampleList()
 	{
 		return o_ExampleList;
 	}
@@ -109,7 +111,7 @@ public abstract class Word
 		return o_sWordValue;
 	}
 
-	public void addExample(Example AExample)
+	public void addExample(SentenceComposite AExample)
 	{
 		this.o_ExampleList.add(AExample);
 	}
@@ -186,6 +188,38 @@ public abstract class Word
 		this.o_sWordValue = wordValue;
 	}
 
+	/**
+     * @return the o_CompoundList
+     */
+    public List<SentenceComposite> getCompoundList()
+    {
+    	return o_CompoundList;
+    }
+
+	/**
+     * @param o_CompoundList the o_CompoundList to set
+     */
+    public void addCompound(SentenceComposite ACompound)
+    {
+    	this.o_CompoundList.add(ACompound);
+    }
+
+	/**
+     * @return the o_IdiomList
+     */
+    public List<SentenceComposite> getIdiomList()
+    {
+    	return o_IdiomList;
+    }
+
+	/**
+     * @param o_IdiomList the o_IdiomList to set
+     */
+    public void addIdiom(SentenceComposite AIdiom)
+    {
+    	this.o_IdiomList.add(AIdiom);
+    }
+
 	public void clear()
 	{
 		o_sLang = "";
@@ -194,6 +228,8 @@ public abstract class Word
 		o_sWordClass = "";
 		o_sWordValue = "";
 		o_ExampleList.clear();
+		o_IdiomList.clear();
+		o_CompoundList.clear();
 		o_ParadigmList.clear();
 		o_SynonymList.clear();
 		o_TranslationList.clear();

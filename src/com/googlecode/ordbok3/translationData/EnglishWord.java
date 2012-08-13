@@ -12,6 +12,12 @@ public class EnglishWord extends Word
 	{
 		WordBuilder.instance().registerWord(ksWordId, new EnglishWord());
 	}
+	
+	protected EnglishWord()
+    {
+	    super();
+    }
+
 
 	@Override
     public Word createWord()

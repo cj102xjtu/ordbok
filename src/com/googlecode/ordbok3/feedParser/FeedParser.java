@@ -168,7 +168,7 @@ public class FeedParser
 	{
 		final WordBuilder wordBuilder = WordBuilder.instance();
 		RootElement root = new RootElement(ksNode);
-		final List<Word> Words = new ArrayList<Word>();
+		final List<Word> words = new ArrayList<Word>();
 		Element item = root.getChild(ksWord);
 
 		// get word properties
@@ -196,7 +196,7 @@ public class FeedParser
 		{
 			public void end()
 			{
-				Words.add(wordBuilder.generateWord());
+				words.add(wordBuilder.generateWord());
 				
 			}
 		});
@@ -357,10 +357,10 @@ public class FeedParser
 		}
 		
 		// translate to Chinese
-		doChineseTranslation(Words);
+		doChineseTranslation(words);
 		
 		
-		return Words;
+		return words;
 	}
 
 	private void doChineseTranslation(final List<Word> Words)

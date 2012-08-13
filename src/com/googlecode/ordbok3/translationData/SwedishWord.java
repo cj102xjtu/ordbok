@@ -9,6 +9,12 @@ import com.googlecode.ordbok3.log.OrdbokLog;
 
 public class SwedishWord extends Word
 {
+
+	protected SwedishWord()
+    {
+		super();
+    }
+
 	// register SwedishWord class
 	static String ksWordId = "sv";
 	static

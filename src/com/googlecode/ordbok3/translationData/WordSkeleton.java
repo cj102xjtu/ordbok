@@ -26,25 +26,25 @@ public class WordSkeleton
 		o_sWordClass = AWordSkeleton.o_sWordClass;
 		o_sWordValue = AWordSkeleton.o_sWordValue;
 
-		o_TranslationList = new ArrayList<String>(
-		        AWordSkeleton.o_TranslationList);
-		Collections.copy(o_TranslationList, AWordSkeleton.o_TranslationList);
-
 		o_ExampleList = new ArrayList<SentenceComposite>(
 		        AWordSkeleton.o_ExampleList);
 		Collections.copy(o_ExampleList, AWordSkeleton.o_ExampleList);
+		
+		o_CompoundList = new ArrayList<SentenceComposite>(AWordSkeleton.o_CompoundList);
+		Collections.copy(o_CompoundList, AWordSkeleton.o_CompoundList);
 
-		o_IdiomList = new ArrayList<SentenceComposite>(o_IdiomList);
-		Collections.copy(AWordSkeleton.o_IdiomList, o_IdiomList);
-
-		o_ParadigmList = new ArrayList<String>(o_ParadigmList);
-		Collections.copy(AWordSkeleton.o_ParadigmList, o_ParadigmList);
+		o_IdiomList = new ArrayList<SentenceComposite>(AWordSkeleton.o_IdiomList);
+		Collections.copy(o_IdiomList, AWordSkeleton.o_IdiomList);
 
 		o_ParadigmList = new ArrayList<String>(AWordSkeleton.o_ParadigmList);
 		Collections.copy(o_ParadigmList, AWordSkeleton.o_ParadigmList);
 
 		o_SynonymList = new ArrayList<String>(AWordSkeleton.o_SynonymList);
 		Collections.copy(o_SynonymList, AWordSkeleton.o_SynonymList);
+
+		o_TranslationList = new ArrayList<String>(
+				AWordSkeleton.o_TranslationList);
+		Collections.copy(o_TranslationList, AWordSkeleton.o_TranslationList);
 	}
 
 	public void addTranslation(String translation)

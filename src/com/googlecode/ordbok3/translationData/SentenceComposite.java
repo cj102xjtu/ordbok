@@ -1,5 +1,6 @@
 package com.googlecode.ordbok3.translationData;
 
+
 public class SentenceComposite
 {
 	private String o_sOriginalSentence;

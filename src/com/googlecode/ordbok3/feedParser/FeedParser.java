@@ -11,6 +11,8 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.googlecode.ordbok3.translationData.ChineseTranslator;
 import com.googlecode.ordbok3.translationData.SentenceComposite;
 import com.googlecode.ordbok3.translationData.Word;
@@ -178,16 +180,16 @@ public class FeedParser
 			@Override
 			public void start(Attributes attributes)
 			{
-				wordBuilder.setLang(attributes.getValue(ksLang));
+				wordBuilder.setLang(StringEscapeUtils.unescapeXml(attributes.getValue(ksLang)));
 				
 				// set word value
-				wordBuilder.setWordValue(attributes.getValue(ksValue));
+				wordBuilder.setWordValue(StringEscapeUtils.unescapeXml(attributes.getValue(ksValue)));
 
 				// set word language
-				wordBuilder.setLang(attributes.getValue(ksLang));
+				wordBuilder.setLang(StringEscapeUtils.unescapeXml(attributes.getValue(ksLang)));
 
 				// set word class
-				wordBuilder.setWordClass(attributes.getValue(ksClass));
+				wordBuilder.setWordClass(StringEscapeUtils.unescapeXml(attributes.getValue(ksClass)));
 			}
 		});
 
@@ -209,7 +211,7 @@ public class FeedParser
 			        @Override
 			        public void start(Attributes attributes)
 			        {
-				        wordBuilder.addTranslation(attributes.getValue(ksValue));
+				        wordBuilder.addTranslation(StringEscapeUtils.unescapeXml(attributes.getValue(ksValue)));
 			        }
 		        });
 
@@ -254,7 +256,7 @@ public class FeedParser
 			        @Override
 			        public void start(Attributes attributes)
 			        {
-				        wordBuilder.setSynonym(attributes.getValue(ksValue));
+				        wordBuilder.setSynonym(StringEscapeUtils.unescapeXml(attributes.getValue(ksValue)));
 			        }
 		        });
 
@@ -265,7 +267,7 @@ public class FeedParser
 			@Override
 			public void start(Attributes AAttributes)
 			{
-				SentenceComposite example = new SentenceComposite(AAttributes.getValue(ksValue));
+				SentenceComposite example = new SentenceComposite(StringEscapeUtils.unescapeXml(AAttributes.getValue(ksValue)));
 				wordBuilder.addExample(example);
 			}
 		});
@@ -282,7 +284,7 @@ public class FeedParser
 				SentenceComposite example = wordBuilder.getExampleList().get(wordBuilder.getExampleList().size() - 1);
 				
 				// update the last example translation value
-				example.setTranslationSentence(AAttributes.getValue(ksValue));
+				example.setTranslationSentence(StringEscapeUtils.unescapeXml(AAttributes.getValue(ksValue)));
 				
 			}
 		});
@@ -294,7 +296,7 @@ public class FeedParser
 			@Override
 			public void start(Attributes AAttributes)
 			{
-				SentenceComposite compound = new SentenceComposite(AAttributes.getValue(ksValue));
+				SentenceComposite compound = new SentenceComposite(StringEscapeUtils.unescapeXml(AAttributes.getValue(ksValue)));
 				wordBuilder.addCompound(compound);
 			}
 		});
@@ -310,7 +312,7 @@ public class FeedParser
 				SentenceComposite compound = wordBuilder.getCompoundList().get(wordBuilder.getCompoundList().size() - 1);
 				
 				// update the last compound translation value
-				compound.setTranslationSentence(AAttributes.getValue(ksValue));
+				compound.setTranslationSentence(StringEscapeUtils.unescapeXml(AAttributes.getValue(ksValue)));
 				
 			}
 		});
@@ -323,7 +325,7 @@ public class FeedParser
 	        public void start(Attributes AAttributes)
 	        {
 		        SentenceComposite idiom = new SentenceComposite(
-		                AAttributes.getValue(ksValue));
+		                StringEscapeUtils.unescapeXml(AAttributes.getValue(ksValue)));
 		        wordBuilder.addIdiom(idiom);
 	        }
         });
@@ -341,8 +343,8 @@ public class FeedParser
 		                .get(wordBuilder.getIdiomList().size() - 1);
 
 		        // update the last idiom translation value
-		        idiom.setTranslationSentence(AAttributes
-		                .getValue(ksValue));
+		        idiom.setTranslationSentence(StringEscapeUtils.unescapeXml(AAttributes
+		                .getValue(ksValue)));
 
 	        }
         });

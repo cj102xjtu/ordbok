@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -69,7 +70,7 @@ public class ChineseTranslator implements TranslatorInterface
 	@Override
     public boolean submitEngWordToTranslationServer()
     {
-		return translateToChinese(o_TranslationTable.generateQueryString());
+		return translateToChinese(o_TranslationTable.generateQueryStringlist());
     }
 	
 	@Override
@@ -78,33 +79,36 @@ public class ChineseTranslator implements TranslatorInterface
 	    return o_TranslationTable.initialTranslation();
     }
 
-	private boolean translateToChinese(String sAEnglishWord)
+	private boolean translateToChinese(ArrayList<String> AEnglishWordList)
 	{
 		boolean bResult = false;
 		try
         {
-			// create request
-	        String query = URLEncoder.encode(sAEnglishWord, "utf-8");
-			String sUrl = ksYouDaoUrl + query;
-			HttpGet request = new HttpGet(sUrl);
-
-			// get response
-	        HttpResponse response = o_Httpclient.execute(request);
-	        
-	        // read response
-	        BufferedReader rd = new BufferedReader
-	        		(new InputStreamReader(response.getEntity().getContent(), "utf-8"));
-	        String line;
-	        StringBuilder xml = new StringBuilder();
-	        while ((line = rd.readLine()) != null) 
-	        {
-	        	xml.append(line);
-	        }
-	        
-	        // clean the entity of response
-	        HttpEntity enty = response.getEntity();
-	        if (enty != null)
-	            enty.consumeContent();
+			StringBuilder xml = new StringBuilder();
+			for (String sEnglishWord : AEnglishWordList)
+            {
+				// create request
+				String query = URLEncoder.encode(sEnglishWord, "utf-8");
+				String sUrl = ksYouDaoUrl + query;
+				HttpGet request = new HttpGet(sUrl);
+				
+				// get response
+				HttpResponse response = o_Httpclient.execute(request);
+				
+				// read response
+				BufferedReader rd = new BufferedReader
+						(new InputStreamReader(response.getEntity().getContent(), "utf-8"));
+				String line;
+				while ((line = rd.readLine()) != null) 
+				{
+					xml.append(line);
+				}
+				
+				// clean the entity of response
+				HttpEntity enty = response.getEntity();
+				if (enty != null)
+					enty.consumeContent();
+            }
 	        
 	        // add translation result to translation table.
 	        o_TranslationTable.addChTranslationResult(xml.toString());

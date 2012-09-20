@@ -52,8 +52,63 @@ public class TranslationTable implements TranslationTableInterface
 		
 		// remove extra delimiter in the end of the string
 		sQueryStringBuilder.setLength(sQueryStringBuilder.length() - k_sDelimiterEnglish.length());
-		
+			
 		return(sQueryStringBuilder.toString());
+	}
+	
+	/**
+	 * Because the Chinese translation API do not process translation text longer than 200 characters.
+	 * we need to split the translation all translate string into less then 200 characters string list
+	 * @return Query string list
+	 */
+	public ArrayList<String> generateQueryStringlist()
+	{
+		ArrayList<String> queryStringList = new ArrayList<String>();
+		
+		// use string builder make it faster.
+		StringBuilder sQueryStringBuilder = new StringBuilder();
+		
+		// counter, make sure string is less then 200 characters
+		int nCounter = 0;
+		
+		// iterator the translation table connect all keys with delimiter to one string
+		Iterator<Entry<String, String>> it = o_EngToChTranslationTable.entrySet().iterator();
+		while (it.hasNext())
+		{
+			Map.Entry<String, String> pairs = (Map.Entry<String, String>) it.next();
+			if(pairs.getKey() != null)
+			{
+				nCounter = nCounter + pairs.getKey().length();
+				
+				// if counter biger than 198(delimiter is \n, 2 characters. create a query string from previous result
+				if(nCounter > 98)
+				{
+					// remove extra delimiter in the end of the string
+					sQueryStringBuilder.setLength(sQueryStringBuilder.length() - k_sDelimiterEnglish.length());
+					
+					// add string to string list
+					queryStringList.add(sQueryStringBuilder.toString());
+					
+					// empty string builder
+					sQueryStringBuilder = new StringBuilder();
+					nCounter = 0;
+				}
+				
+				sQueryStringBuilder.append(pairs.getKey());
+				sQueryStringBuilder.append(k_sDelimiterEnglish);
+			}
+
+		}
+		
+		// add last string to list
+		
+		// remove extra delimiter in the end of the string
+		sQueryStringBuilder.setLength(sQueryStringBuilder.length() - k_sDelimiterEnglish.length());
+		
+		// add string to string list
+		queryStringList.add(sQueryStringBuilder.toString()); 
+		
+		return queryStringList;
 	}
 	
 	public boolean addChTranslationResult(String sAXmlResult)

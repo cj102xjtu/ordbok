@@ -180,9 +180,9 @@ public class MainWindow extends Activity implements OnClickListener {
 			content = content.replace("&cd lt", "[");
 			content = content.replace("&gt", "]");
 			content = content.replace("&quot", "\"");
-			content = content.replace("Ã¤", "ä");//&amparing;
-			content = content.replace("Ã¥", "å");//�?		
-			content = content.replace("Ã¶", "ö");
+			content = content.replace("ÃƒÂ¤", "Ã¤");//&amparing;
+			content = content.replace("ÃƒÂ¥", "Ã¥");//ï¿½?		
+			content = content.replace("ÃƒÂ¶", "Ã¶");
 			content = content.replace("&amp;#39;", "'");
 			content = content.replace("&amp", "&");
 			
@@ -190,7 +190,7 @@ public class MainWindow extends Activity implements OnClickListener {
 			content = content.replace("origin=lexin", "");
 			content = content.replaceAll("date=(\\S{12})", "");
 			
-			//content = content.replaceAll("�?, "�?");//�?		
+			//content = content.replaceAll("ï¿½?, "ï¿½?");//ï¿½?		
 			content = content.replace("\\\"", "");
 			content = content.replace(">", ">\n");
 			content = content.replace("+", "_");

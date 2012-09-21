@@ -78,10 +78,11 @@ public class TranslationTable implements TranslationTableInterface
 			Map.Entry<String, String> pairs = (Map.Entry<String, String>) it.next();
 			if(pairs.getKey() != null)
 			{
-				nCounter = nCounter + pairs.getKey().length();
-				
-				// if counter biger than 198(delimiter is \n, 2 characters. create a query string from previous result
-				if(nCounter > 98)
+				nCounter = nCounter + pairs.getKey().length() + 2;
+
+				// if counter biger than 200. create a query string from previous result
+				// not sure how YouDao count 200 charact. have 20 as buffer.
+				if(nCounter > 180)
 				{
 					// remove extra delimiter in the end of the string
 					sQueryStringBuilder.setLength(sQueryStringBuilder.length() - k_sDelimiterEnglish.length());
@@ -101,7 +102,6 @@ public class TranslationTable implements TranslationTableInterface
 		}
 		
 		// add last string to list
-		
 		// remove extra delimiter in the end of the string
 		sQueryStringBuilder.setLength(sQueryStringBuilder.length() - k_sDelimiterEnglish.length());
 		
@@ -128,16 +128,21 @@ public class TranslationTable implements TranslationTableInterface
 			chTranslationList.add(m.group(1));
 		}
 		
-		
 		// set the Chinese translation to translation table
 		Iterator<Entry<String, String>> it = o_EngToChTranslationTable.entrySet().iterator();
+		Map.Entry<String, String> pairs = null; 
 		for (String chWord : chTranslationList)
         {
-	        if(it.hasNext())
+	        while(it.hasNext())
 	        {
-				Map.Entry<String, String> pairs = (Map.Entry<String, String>) it.next();
-				pairs.setValue(chWord);
+				pairs = (Map.Entry<String, String>) it.next();
+				if(pairs.getKey() != null)
+				{
+					break;
+				}
 	        }
+	        OrdbokLog.d(LOG_TAG, "jun" + chWord + pairs.getKey());
+	        pairs.setValue(chWord);
         }
 		
 		return bResult;

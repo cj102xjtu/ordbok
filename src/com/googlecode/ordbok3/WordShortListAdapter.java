@@ -1,6 +1,8 @@
 package com.googlecode.ordbok3;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import com.googlecode.ordbok3.translationData.*;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,7 +22,7 @@ public class WordShortListAdapter extends ArrayAdapter<Word> {
 		    public ImageView image;
 		  }
 	
-	public WordShortListAdapter(Context context, int resource, ArrayList<Word> wordList) {
+	public WordShortListAdapter(Context context, int resource, List<Word> wordList) {
 		super(context, resource, wordList);
 		o_context = context;
 	}
@@ -51,10 +53,23 @@ public class WordShortListAdapter extends ArrayAdapter<Word> {
 		Word word = getItem(position);
 		if(word != null)
 		{
-			String s = getItem(position).getWordValue();
-			holder.firstLine.setText(s);
-			holder.secondLine.setText(s);
-			holder.image.setImageResource(R.drawable.flag_sv);
+			if(word.getLang().equals("sv"))
+			{
+				String s = ((SwedishWord) word).getWordValue() + ";" + word.getTranslationList().toString();
+				String ch = ((SwedishWord) word).getChineseTranslationList().toString();
+				holder.firstLine.setText(s);
+				holder.secondLine.setText(ch);
+				holder.image.setImageResource(R.drawable.flag_sv);
+			}
+			else
+			{
+				String s = word.getWordValue() + ";" + ((EnglishWord) word).getTranslationList().toString();
+				String ch = ((EnglishWord) word).getChineseWordValue();
+				holder.firstLine.setText(s);
+				holder.secondLine.setText(ch);
+				holder.image.setImageResource(R.drawable.flag_en);
+			}
+
 		}
 		
 		return rowView;

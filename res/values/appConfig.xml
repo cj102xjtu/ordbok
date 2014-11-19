@@ -12,5 +12,5 @@
 		Debug 1
 		Info  2  
 	-->
-	<integer name="logLevel">2</integer>    
+	<integer name="logLevel">0</integer>    
 </resources>

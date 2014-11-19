@@ -8,27 +8,29 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SearchView.OnCloseListener;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 
 import com.googlecode.ordbok3.feedParser.FeedParser;
 import com.googlecode.ordbok3.log.OrdbokLog;
+import com.googlecode.ordbok3.translationData.Word;
 
 public class MainWindow extends Activity implements OnClickListener {
 	
@@ -113,12 +115,13 @@ public class MainWindow extends Activity implements OnClickListener {
 	}
 	
 	
-	private class Translate2ChTask extends AsyncTask<String, Integer, String> {
+	private class Translate2ChTask extends AsyncTask<String, Integer, List<Word> > 
+	{
 	    // Do the long-running work in here
-	    protected String doInBackground(String... contents) {
+	    protected List<Word> doInBackground(String... contents) {
 			FeedParser parser = new FeedParser();
-			parser.parse(contents[0]);
-	        return contents[0];
+			List<Word> words = parser.parse(contents[0]);
+	        return words;
 	    }    
 	    
 
@@ -127,7 +130,7 @@ public class MainWindow extends Activity implements OnClickListener {
 	    }
 
 	    // This is called when doInBackground() is finished
-	    protected void onPostExecute(String result) {
+	    protected void onPostExecute(List<Word>  result) {
 	    	populateLookupResult(result);
 	    	o_progressDialog.dismiss();
 	    }
@@ -137,7 +140,7 @@ public class MainWindow extends Activity implements OnClickListener {
 	TextView textViewText;
 	String soundFile;
 	final String LOG_TAG = this.getClass().getSimpleName();
-	ArrayList<Word> o_translateResultList = new ArrayList<Word>();
+	List<Word> o_translateResultList = new ArrayList<Word>();
 	WordShortListAdapter o_listAdapter;
 	ProgressDialog o_progressDialog;
 
@@ -151,11 +154,7 @@ public class MainWindow extends Activity implements OnClickListener {
 		
 		setContentView(R.layout.main);
 		
-		textViewText = (TextView) findViewById(R.id.TextViewText);
-		textViewText.setMovementMethod(new ScrollingMovementMethod());
-		//webViewText = (WebView) findViewById(R.id.WebViewText);
-		
-	    SearchView searchView =
+	    final SearchView searchView =
 	            (SearchView) findViewById(R.id.searchView);
 	    
 	    searchView.setOnQueryTextListener(new OnQueryTextListener() { 
@@ -173,17 +172,30 @@ public class MainWindow extends Activity implements OnClickListener {
 			} 
 
         });
+		// Catch event on [x] button inside search view
+		int searchCloseButtonId = searchView.getContext().getResources()
+				.getIdentifier("android:id/search_close_btn", null, null);
+		// Get the search close button image view
+		ImageView closeButton = (ImageView) searchView
+				.findViewById(searchCloseButtonId);
+
+		// Set on click listener
+		closeButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				searchView.setQuery("", false);
+				o_translateResultList = null;
+				o_listAdapter.clear();
+			}
+		});
 	    
 	    ListView listView = (ListView)findViewById(R.id.listView);
 	    o_listAdapter = new WordShortListAdapter(this, R.layout.rowlayout, o_translateResultList);
 	    listView.setAdapter(o_listAdapter);
 	    
-	    o_progressDialog = new ProgressDialog(this);
-	    
+	    o_progressDialog = new ProgressDialog(this);  
 		
-		//buttonUttal.setOnClickListener(this);
-		//buttonUttal.setEnabled(false);
-
 	}
 	
 	@Override
@@ -245,130 +257,130 @@ public class MainWindow extends Activity implements OnClickListener {
 		new Translate2ChTask().execute(content);
 	}
 
-	private void populateLookupResult(String content) {
+	private void populateLookupResult(List<Word> words) {
 
-		content = content.replace("&cd lt", "[");
-		content = content.replace("&gt", "]");
-		content = content.replace("&quot", "\"");
-		content = content.replace("Ã¤", "ä");//&aring;
-		content = content.replace("Ã¥", "å");//�?		
-		content = content.replace("Ã¶", "ö");
-		content = content.replace("&amp;#39;", "'");
-		content = content.replace("&amp", "&");
-		
-		content = content.replace("&amp;quot;", "");
-		content = content.replace("origin=lexin", "");
-		content = content.replaceAll("date=(\\S{12})", "");
-		
-		//content = content.replaceAll("Ã¯Â¿Â½?, "Ã¯Â¿Â½?");//Ã¯Â¿Â½?		
-		content = content.replace("\\\"", "");
-		content = content.replace(">", ">\n");
-		content = content.replace("+", "_");
-		content = content.replace("comment=", " -- ");
-		content = content.replace("origin=lexin", "");
-
-
-		
-		
-		//Log.e(LOG_TAG,content);
-		ArrayList<Word> words = new ArrayList<Word>();
-		Word word=new Word();
-		
-		
-		String strContents[] = content.split("\n");
-		
-		// print the final formated content to log
-		for (String line : strContents)
-		{
-		    OrdbokLog.i(LOG_TAG, line);
-		}
-		
-		
-		for (int i=0;i<strContents.length;i++)
-		{
-			//System.out.println(i+": "+strContents[i]);
-			try{
-			if (strContents[i].contains("<word value"))
-			{
-				word.setWordValue(strContents[i].substring(strContents[i].indexOf("value=")+6,strContents[i].indexOf("lang=")-1));
-				word.setLang(strContents[i].substring(strContents[i].indexOf("lang=")+5,strContents[i].indexOf("class=")-1));
-				word.setWordClass(strContents[i].substring(strContents[i].indexOf("class=")+6,strContents[i].indexOf("id=")-1));
-			} else if (strContents[i].contains("</word"))
-			{
-				words.add(word);
-				word = new Word();
-			}
-			else if (strContents[i].contains("<translation value"))
-			{
-				if (strContents[i-1].contains("word")){
-					word.setWordContent("<h3><font color='black'><b>");
-					word.setWordContent("<l>"+strContents[i].substring(strContents[i].indexOf("value=")+6,strContents[i].indexOf(">"))+"</l>");
-					word.setWordContent("</b></font></h3>");
-				} else {
-					word.setWordContent("<l>"+strContents[i].substring(strContents[i].indexOf("value=")+6,strContents[i].indexOf(">"))+"</l>");
-					word.setWordContent("<br /><br />");
-				}
-			} else if (strContents[i].contains("<phonetic value"))
-			{
-				word.setPhoneticValue(strContents[i].substring(strContents[i].indexOf("value=")+6,strContents[i].indexOf("soundFile=")-1));
-				word.setPhoneticSoundFile(SafeSubString(strContents[i],strContents[i].indexOf("soundFile=")+10,strContents[i].indexOf(">")));
-				if (!word.getPhoneticSoundFile().trim().equalsIgnoreCase("")) 
-				{
-					soundFile = word.getPhoneticSoundFile().trim();
-					//buttonUttal.setEnabled(true);
-				}
-			} else if (strContents[i].contains("<inflection value"))
-			{
-				word.setWordContent(SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">")));
-				word.setWordContent(" ");
-			} else if (strContents[i].contains("<example"))
-			{
-				if (!strContents[i-1].contains("example")) word.setWordContent("<font color='green'><b>Examples</b></font><br />");
-				word.setWordContent("<b>"+SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">"))+"</b>");
-				word.setWordContent("; ");
-			} else if (strContents[i].contains("<compound"))
-			{
-				if (!strContents[i-1].contains("compound")) word.setWordContent("<font color='yellow'><b>Compound</b></font><br />");
-				word.setWordContent(SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">")));
-				word.setWordContent("; ");
-			} else if (strContents[i].contains("<idiom"))
-			{
-				if (!strContents[i-1].contains("idiom")) word.setWordContent("<font color='purple'><b>Idiom</b></font><br />");
-				word.setWordContent("<b>"+SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">"))+"</b>");
-				word.setWordContent("; ");
-			}else if (strContents[i].contains("/paradigm"))
-			{
-				word.setWordContent("<br />");
-			} else if (strContents[i].contains("</inflection>"))
-			{
-				word.setWordContent(" ");
-			} else if (strContents[i].contains("<inflection value"))
-			{
-				if (!strContents[i-1].contains("inflection")) word.setWordContent("<font color='red'><b>Inflection</b></font><br />");
-				word.setWordContent(SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">")));
-				word.setWordContent(" ");
-			} else if (strContents[i].contains("<synonym value"))
-			{
-				if (!strContents[i-1].contains("synonym")) word.setWordContent("<font color='red'><b>Synonym</b></font><br />");
-				word.setWordContent(SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf("level=")-1));
-				word.setWordContent(" ");
-			} else if (strContents[i].contains("</synonym"))
-			{
-				if (!strContents[i+1].contains("synonym")) word.setWordContent("<br />");
-			}
-			}
-			catch(Exception e){
-				Log.e(LOG_TAG,strContents[i]+ e.getMessage());
-			}
-		}
-		
-		String allWords = "";
-		for (int j=0;j<words.size();j++)
-		{
-			
-			allWords =allWords+words.get(j).toString()+"<font color='white'> --------------------------------------- </font><br />";
-		}
-		allWords = allWords.replace("<br /><br />", "<br />");
+//		words = words.replace("&cd lt", "[");
+//		words = words.replace("&gt", "]");
+//		words = words.replace("&quot", "\"");
+//		words = words.replace("Ã¤", "ä");//&aring;
+//		words = words.replace("Ã¥", "å");//�?		
+//		words = words.replace("Ã¶", "ö");
+//		words = words.replace("&amp;#39;", "'");
+//		words = words.replace("&amp", "&");
+//		
+//		words = words.replace("&amp;quot;", "");
+//		words = words.replace("origin=lexin", "");
+//		words = words.replaceAll("date=(\\S{12})", "");
+//		
+//		//content = content.replaceAll("Ã¯Â¿Â½?, "Ã¯Â¿Â½?");//Ã¯Â¿Â½?		
+//		words = words.replace("\\\"", "");
+//		words = words.replace(">", ">\n");
+//		words = words.replace("+", "_");
+//		words = words.replace("comment=", " -- ");
+//		words = words.replace("origin=lexin", "");
+//
+//
+//		
+//		
+//		//Log.e(LOG_TAG,content);
+//		ArrayList<Word> words = new ArrayList<Word>();
+//		Word word=new Word();
+//		
+//		
+//		String strContents[] = words.split("\n");
+//		
+//		// print the final formated content to log
+//		for (String line : strContents)
+//		{
+//		    OrdbokLog.i(LOG_TAG, line);
+//		}
+//		
+//		
+//		for (int i=0;i<strContents.length;i++)
+//		{
+//			//System.out.println(i+": "+strContents[i]);
+//			try{
+//			if (strContents[i].contains("<word value"))
+//			{
+//				word.setWordValue(strContents[i].substring(strContents[i].indexOf("value=")+6,strContents[i].indexOf("lang=")-1));
+//				word.setLang(strContents[i].substring(strContents[i].indexOf("lang=")+5,strContents[i].indexOf("class=")-1));
+//				word.setWordClass(strContents[i].substring(strContents[i].indexOf("class=")+6,strContents[i].indexOf("id=")-1));
+//			} else if (strContents[i].contains("</word"))
+//			{
+//				words.add(word);
+//				word = new Word();
+//			}
+//			else if (strContents[i].contains("<translation value"))
+//			{
+//				if (strContents[i-1].contains("word")){
+//					word.setWordContent("<h3><font color='black'><b>");
+//					word.setWordContent("<l>"+strContents[i].substring(strContents[i].indexOf("value=")+6,strContents[i].indexOf(">"))+"</l>");
+//					word.setWordContent("</b></font></h3>");
+//				} else {
+//					word.setWordContent("<l>"+strContents[i].substring(strContents[i].indexOf("value=")+6,strContents[i].indexOf(">"))+"</l>");
+//					word.setWordContent("<br /><br />");
+//				}
+//			} else if (strContents[i].contains("<phonetic value"))
+//			{
+//				word.setPhoneticValue(strContents[i].substring(strContents[i].indexOf("value=")+6,strContents[i].indexOf("soundFile=")-1));
+//				word.setPhoneticSoundFile(SafeSubString(strContents[i],strContents[i].indexOf("soundFile=")+10,strContents[i].indexOf(">")));
+//				if (!word.getPhoneticSoundFile().trim().equalsIgnoreCase("")) 
+//				{
+//					soundFile = word.getPhoneticSoundFile().trim();
+//					//buttonUttal.setEnabled(true);
+//				}
+//			} else if (strContents[i].contains("<inflection value"))
+//			{
+//				word.setWordContent(SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">")));
+//				word.setWordContent(" ");
+//			} else if (strContents[i].contains("<example"))
+//			{
+//				if (!strContents[i-1].contains("example")) word.setWordContent("<font color='green'><b>Examples</b></font><br />");
+//				word.setWordContent("<b>"+SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">"))+"</b>");
+//				word.setWordContent("; ");
+//			} else if (strContents[i].contains("<compound"))
+//			{
+//				if (!strContents[i-1].contains("compound")) word.setWordContent("<font color='yellow'><b>Compound</b></font><br />");
+//				word.setWordContent(SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">")));
+//				word.setWordContent("; ");
+//			} else if (strContents[i].contains("<idiom"))
+//			{
+//				if (!strContents[i-1].contains("idiom")) word.setWordContent("<font color='purple'><b>Idiom</b></font><br />");
+//				word.setWordContent("<b>"+SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">"))+"</b>");
+//				word.setWordContent("; ");
+//			}else if (strContents[i].contains("/paradigm"))
+//			{
+//				word.setWordContent("<br />");
+//			} else if (strContents[i].contains("</inflection>"))
+//			{
+//				word.setWordContent(" ");
+//			} else if (strContents[i].contains("<inflection value"))
+//			{
+//				if (!strContents[i-1].contains("inflection")) word.setWordContent("<font color='red'><b>Inflection</b></font><br />");
+//				word.setWordContent(SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf(">")));
+//				word.setWordContent(" ");
+//			} else if (strContents[i].contains("<synonym value"))
+//			{
+//				if (!strContents[i-1].contains("synonym")) word.setWordContent("<font color='red'><b>Synonym</b></font><br />");
+//				word.setWordContent(SafeSubString(strContents[i],strContents[i].indexOf("value=")+6,strContents[i].indexOf("level=")-1));
+//				word.setWordContent(" ");
+//			} else if (strContents[i].contains("</synonym"))
+//			{
+//				if (!strContents[i+1].contains("synonym")) word.setWordContent("<br />");
+//			}
+//			}
+//			catch(Exception e){
+//				Log.e(LOG_TAG,strContents[i]+ e.getMessage());
+//			}
+//		}
+//		
+//		String allWords = "";
+//		for (int j=0;j<words.size();j++)
+//		{
+//			
+//			allWords =allWords+words.get(j).toString()+"<font color='white'> --------------------------------------- </font><br />";
+//		}
+//		allWords = allWords.replace("<br /><br />", "<br />");
 		
 		o_translateResultList = words;
 		o_listAdapter.clear();
@@ -377,9 +389,9 @@ public class MainWindow extends Activity implements OnClickListener {
 		//Log.i("i ",allWords);
 		//textViewText.setText(allWords);
 		
-		if (content.trim().equals("")) 
-		    textViewText.setText("Sorry, the word is not found.");
-		else textViewText.setText(Html.fromHtml(allWords), TextView.BufferType.SPANNABLE);
+//		if (words.trim().equals("")) 
+//		    textViewText.setText("Sorry, the word is not found.");
+//		else textViewText.setText(Html.fromHtml(allWords), TextView.BufferType.SPANNABLE);
 	}
 
 	}

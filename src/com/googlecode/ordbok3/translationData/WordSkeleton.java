@@ -129,44 +129,48 @@ public class WordSkeleton
 
 	public void setWordClass(String wordClass)
 	{
-		if (wordClass.equals("nn"))
+		if(wordClass != null)
 		{
-			this.o_sWordClass = "substantiv,";
-			return;
-		} else if (wordClass.equals("vb"))
-		{
-			this.o_sWordClass = "verb,";
-			return;
-		} else if (wordClass.equals("jj"))
-		{
-			this.o_sWordClass = "adjektiv,";
-			return;
-		} else if (wordClass.equals("ab"))
-		{
-			this.o_sWordClass = "adverb,";
-			return;
-		} else if (wordClass.equals("kn"))
-		{
-			this.o_sWordClass = "konjunktion,";
-			return;
-		} else if (wordClass.equals("pp"))
-		{
-			this.o_sWordClass = "preposition,";
-			return;
-		} else if (wordClass.equals("in"))
-		{
-			this.o_sWordClass = "interjection,";
-			return;
-		} else if (wordClass.equals("pn"))
-		{
-			this.o_sWordClass = "pronomen,";
-			return;
-		} else if (wordClass.equals("abbrev"))
-		{
-			this.o_sWordClass = "fšrkortning,";
-			return;
+			if (wordClass.equals("nn"))
+			{
+				this.o_sWordClass = "substantiv,";
+				return;
+			} else if (wordClass.equals("vb"))
+			{
+				this.o_sWordClass = "verb,";
+				return;
+			} else if (wordClass.equals("jj"))
+			{
+				this.o_sWordClass = "adjektiv,";
+				return;
+			} else if (wordClass.equals("ab"))
+			{
+				this.o_sWordClass = "adverb,";
+				return;
+			} else if (wordClass.equals("kn"))
+			{
+				this.o_sWordClass = "konjunktion,";
+				return;
+			} else if (wordClass.equals("pp"))
+			{
+				this.o_sWordClass = "preposition,";
+				return;
+			} else if (wordClass.equals("in"))
+			{
+				this.o_sWordClass = "interjection,";
+				return;
+			} else if (wordClass.equals("pn"))
+			{
+				this.o_sWordClass = "pronomen,";
+				return;
+			} else if (wordClass.equals("abbrev"))
+			{
+				this.o_sWordClass = "fšrkortning,";
+				return;
+			}
+			this.o_sWordClass = wordClass;
 		}
-		this.o_sWordClass = wordClass;
+		
 	}
 
 	public void setWordValue(String wordValue)

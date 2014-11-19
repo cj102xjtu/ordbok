@@ -9,10 +9,12 @@ import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
+import android.util.Log;
 import android.util.Xml;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import com.googlecode.ordbok3.log.OrdbokLog;
 import com.googlecode.ordbok3.translationData.ChineseTranslator;
 import com.googlecode.ordbok3.translationData.SentenceComposite;
 import com.googlecode.ordbok3.translationData.Word;
@@ -44,6 +46,8 @@ public class FeedParser
 	static final String ksCompound = "compound";
 	static final String ksIdiom = "idiom";
 	static final String ksDefinition = "definition";
+	
+	static final String LOG_TAG = "FeedParser";
 
 //	// test string, remove this after parser implement.
 //	static final String ksTestXml = "<node>"
@@ -180,6 +184,8 @@ public class FeedParser
 			@Override
 			public void start(Attributes attributes)
 			{
+	        	OrdbokLog.d(LOG_TAG, "Word, " + attributes.getValue(ksValue));
+
 				wordBuilder.setLang(StringEscapeUtils.unescapeXml(attributes.getValue(ksLang)));
 				
 				// set word value
@@ -190,6 +196,8 @@ public class FeedParser
 
 				// set word class
 				wordBuilder.setWordClass(StringEscapeUtils.unescapeXml(attributes.getValue(ksClass)));
+				
+	        	OrdbokLog.d(LOG_TAG, "End of the Word start");
 			}
 		});
 
@@ -198,6 +206,7 @@ public class FeedParser
 		{
 			public void end()
 			{
+				OrdbokLog.d(LOG_TAG, "end element");
 				words.add(wordBuilder.generateWord());
 				
 			}
@@ -211,6 +220,7 @@ public class FeedParser
 			        @Override
 			        public void start(Attributes attributes)
 			        {
+			        	OrdbokLog.d(LOG_TAG, "translation: "+ attributes.getValue(ksValue));
 				        wordBuilder.addTranslation(StringEscapeUtils.unescapeXml(attributes.getValue(ksValue)));
 			        }
 		        });
@@ -223,6 +233,7 @@ public class FeedParser
 			        @Override
 			        public void start(Attributes attributes)
 			        {
+			        	OrdbokLog.d(LOG_TAG, "phonetic: "+ attributes.getValue(ksValue));
 				        // set phonetic value
 				        wordBuilder.setPhoneticValue(attributes
 				                .getValue(ksValue));
@@ -242,6 +253,8 @@ public class FeedParser
 			        @Override
 			        public void start(Attributes attributes)
 			        {
+			        	OrdbokLog.d(LOG_TAG, "paradigm: "+ attributes.getValue(ksValue));
+
 				        wordBuilder.addParadigms(attributes
 				                .getValue(ksValue));
 
@@ -256,6 +269,8 @@ public class FeedParser
 			        @Override
 			        public void start(Attributes attributes)
 			        {
+			        	OrdbokLog.d(LOG_TAG, "synonym: "+ attributes.getValue(ksValue));
+
 				        wordBuilder.setSynonym(StringEscapeUtils.unescapeXml(attributes.getValue(ksValue)));
 			        }
 		        });
@@ -267,6 +282,8 @@ public class FeedParser
 			@Override
 			public void start(Attributes AAttributes)
 			{
+	        	OrdbokLog.d(LOG_TAG, "example: "+ AAttributes.getValue(ksValue));
+
 				SentenceComposite example = new SentenceComposite(StringEscapeUtils.unescapeXml(AAttributes.getValue(ksValue)));
 				wordBuilder.addExample(example);
 			}
@@ -280,6 +297,8 @@ public class FeedParser
 			@Override
 			public void start(Attributes AAttributes)
 			{
+	        	OrdbokLog.d(LOG_TAG, "example.translation: "+ AAttributes.getValue(ksValue));
+
 				// get the last example in the list
 				SentenceComposite example = wordBuilder.getExampleList().get(wordBuilder.getExampleList().size() - 1);
 				
@@ -296,6 +315,8 @@ public class FeedParser
 			@Override
 			public void start(Attributes AAttributes)
 			{
+	        	OrdbokLog.d(LOG_TAG, "compound: "+ AAttributes.getValue(ksValue));
+
 				SentenceComposite compound = new SentenceComposite(StringEscapeUtils.unescapeXml(AAttributes.getValue(ksValue)));
 				wordBuilder.addCompound(compound);
 			}
@@ -308,6 +329,8 @@ public class FeedParser
 			@Override
 			public void start(Attributes AAttributes)
 			{
+	        	OrdbokLog.d(LOG_TAG, "compound.translation: "+ AAttributes.getValue(ksValue));
+
 				// get the last compound in the list
 				SentenceComposite compound = wordBuilder.getCompoundList().get(wordBuilder.getCompoundList().size() - 1);
 				
@@ -324,6 +347,8 @@ public class FeedParser
 	        @Override
 	        public void start(Attributes AAttributes)
 	        {
+	        	OrdbokLog.d(LOG_TAG, "idiom: "+ AAttributes.getValue(ksValue));
+
 		        SentenceComposite idiom = new SentenceComposite(
 		                StringEscapeUtils.unescapeXml(AAttributes.getValue(ksValue)));
 		        wordBuilder.addIdiom(idiom);
@@ -337,6 +362,8 @@ public class FeedParser
 	        @Override
 	        public void start(Attributes AAttributes)
 	        {
+	        	OrdbokLog.d(LOG_TAG, "idiom.translation: " + AAttributes.getValue(ksValue));
+
 		        // get the last idiom in the list
 		        SentenceComposite idiom = wordBuilder
 		                .getIdiomList()
@@ -355,6 +382,7 @@ public class FeedParser
 		}
 		catch (Exception e)
 		{
+			OrdbokLog.e(LOG_TAG, Log.getStackTraceString(e));
 			throw new RuntimeException(e);
 		}
 		

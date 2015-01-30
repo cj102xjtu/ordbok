@@ -55,7 +55,7 @@ public class WordShortListAdapter extends ArrayAdapter<Word> {
 		{
 			if(word.getLang().equals("sv"))
 			{
-				String s = ((SwedishWord) word).getWordValue() + ";" + word.getTranslationList().toString();
+				String s = ((SwedishWord) word).getWordValue() + " " + word.getTranslationList().toString();
 				String ch = ((SwedishWord) word).getChineseTranslationList().toString();
 				holder.firstLine.setText(s);
 				holder.secondLine.setText(ch);
@@ -63,7 +63,7 @@ public class WordShortListAdapter extends ArrayAdapter<Word> {
 			}
 			else
 			{
-				String s = word.getWordValue() + ";" + ((EnglishWord) word).getTranslationList().toString();
+				String s = word.getWordValue() + " " + ((EnglishWord) word).getTranslationList().toString();
 				String ch = ((EnglishWord) word).getChineseWordValue();
 				holder.firstLine.setText(s);
 				holder.secondLine.setText(ch);

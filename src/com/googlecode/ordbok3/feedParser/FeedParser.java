@@ -387,8 +387,7 @@ public class FeedParser
 		}
 		
 		// translate to Chinese
-		doChineseTranslation(words);
-		
+		doChineseTranslation(words);		
 		
 		return words;
 	}

@@ -15,6 +15,7 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -147,7 +148,6 @@ public class MainWindow extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		// initialize ordbokLog
 		OrdbokLog.initialize(this);
 		
@@ -195,7 +195,12 @@ public class MainWindow extends Activity implements OnClickListener {
 	    	String query = intent.getStringExtra(SearchManager.QUERY);
 	    	LookUpWord(query);
 	    }
-		// TODO Auto-generated method stub
+	    else if (Intent.ACTION_VIEW.equalsIgnoreCase(intent.getAction())) {
+	        // Handle a suggestions click (because the suggestions all use ACTION_VIEW)
+	        Uri data = intent.getData();
+	        OrdbokLog.d(LOG_TAG, "the selected query suggestion is: " + data.toString());
+	        LookUpWord(data.toString());
+	    }
 		super.onNewIntent(intent);
 	}
 

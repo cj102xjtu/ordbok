@@ -5,6 +5,7 @@ import com.googlecode.ordbok3.log.OrdbokLog;
 
 public class EnglishWord extends Word
 {
+	private static final long serialVersionUID = 4492325974999132855L;
 	private static final String LOG_TAG = "EnglishWord";
 	static String ksWordId = "en";
 	

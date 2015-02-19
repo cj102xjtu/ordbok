@@ -1,8 +1,14 @@
 package com.googlecode.ordbok3.translationData;
 
+import java.io.Serializable;
 
-public class SentenceComposite
+
+public class SentenceComposite implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String o_sOriginalSentence;
 	private String o_sTranslationSentence;
 	private String o_sChineseTranslationSentence;

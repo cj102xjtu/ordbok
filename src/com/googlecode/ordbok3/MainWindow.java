@@ -1,14 +1,16 @@
 package com.googlecode.ordbok3;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.http.protocol.HTTP;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -24,6 +26,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -51,11 +55,11 @@ public class MainWindow extends Activity implements OnClickListener {
 		// Do the long-running work in here
 	    protected String doInBackground(String... keyword) {
 
-			String content = "";
+			StringBuilder content = new StringBuilder();
 			try {
 				URL url;
 				URLConnection urlConn;
-				DataOutputStream dos;
+				OutputStreamWriter dos;
 				BufferedReader dis;
 
 				String ord = keyword[0];
@@ -63,27 +67,22 @@ public class MainWindow extends Activity implements OnClickListener {
 				url = new URL(
 						"http://folkets-lexikon.csc.kth.se/folkets/folkets/lookupword");
 				urlConn = url.openConnection();
-				urlConn.setDoInput(true);
 				urlConn.setDoOutput(true);
-				urlConn.setUseCaches(false);
-				 urlConn.setRequestProperty("Content-Type","text/x-gwt-rpc; charset=utf-8");
-				dos = new DataOutputStream(urlConn.getOutputStream());
+				 urlConn.setRequestProperty(HTTP.CONTENT_TYPE,"text/x-gwt-rpc; charset=utf-8");
+				dos = new OutputStreamWriter(urlConn.getOutputStream(), HTTP.UTF_8);
 
-				ord = ord.replace("ä", "Ã¤");//ï¿½?		" +
-				ord = ord.replace("å", "Ã¥");
-				ord = ord.replace("ö", "Ã¶");
 				String message = "7|0|6|http://folkets-lexikon.csc.kth.se/folkets/folkets/|1F6DF5ACEAE7CE88AACB1E5E4208A6EC|se.algoritmica.folkets.client.LookUpService|lookUpWord|se.algoritmica.folkets.client.LookUpRequest/1089007912|" + ord + "|1|2|3|4|1|5|5|1|0|1|6|";
-				dos.writeBytes(message);
+				dos.write(message);
 				dos.flush();
 				dos.close();
 
 				dis = new BufferedReader(new InputStreamReader(
-						urlConn.getInputStream(), "UTF-8"));
+						urlConn.getInputStream(), HTTP.UTF_8));
 				String s = "";
 
 				while ((s = dis.readLine()) != null) {
 
-					content += s;
+					content.append(s);
 				}
 				OrdbokLog.i(LOG_TAG, "raw content" + content);				
 				dis.close(); 
@@ -93,7 +92,7 @@ public class MainWindow extends Activity implements OnClickListener {
 			} catch (IOException ioe) {
 				Log.e(LOG_TAG, ioe.getMessage());
 			}
-	        return content;
+	        return content.toString();
 	    }    
 	    
 
@@ -181,6 +180,18 @@ public class MainWindow extends Activity implements OnClickListener {
 	    ListView listView = (ListView)findViewById(R.id.listView);
 	    o_listAdapter = new WordShortListAdapter(this, R.layout.rowlayout, o_translateResultList);
 	    listView.setAdapter(o_listAdapter);
+	    
+	    listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Word selectedWord = ((WordShortListAdapter)(parent.getAdapter())).getItem(position);
+			    Intent intent = new Intent(parent.getContext(), WordDetailView.class);
+			    intent.putExtra(WordDetailView.WORD_INFO, selectedWord);
+			    startActivity(intent);				
+			}
+		});
 	    
 	    o_progressDialog = new ProgressDialog(this);  		
 

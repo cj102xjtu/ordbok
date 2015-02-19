@@ -9,6 +9,7 @@ import com.googlecode.ordbok3.log.OrdbokLog;
 
 public class SwedishWord extends Word
 {
+	private static final long serialVersionUID = 7774758050011701825L;
 
 	protected SwedishWord()
     {

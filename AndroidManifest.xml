@@ -40,6 +40,11 @@
             android:label="@string/about_title"
             android:theme="@android:style/Theme.Dialog" >
         </activity>
+        <activity
+            android:name="WordDetailView"
+            android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar" >
+        </activity>
+
         <provider
             android:authorities="com.googlecode.ordbok3.SuggestionProvider"
             android:name="com.googlecode.ordbok3.suggestProvider.SearchWordSuggestProvider"

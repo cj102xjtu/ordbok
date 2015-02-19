@@ -4,6 +4,11 @@ import java.util.HashMap;
 
 public class WordBuilder extends WordSkeleton
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private WordBuilder()
     {
     }

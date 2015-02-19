@@ -1,11 +1,16 @@
 package com.googlecode.ordbok3.translationData;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WordSkeleton
+public class WordSkeleton implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String o_sLang = "";
 	String o_sPhoneticSoundFile = "";
 	String o_sPhoneticValue = "";
